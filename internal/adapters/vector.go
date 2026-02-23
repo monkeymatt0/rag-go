@@ -11,7 +11,7 @@ type VectorRepository struct {
 	client *qdrant.Client
 }
 
-func(vr *VectorRepository) NewVectorRepository(host string, port int) (*VectorRepository, error) {
+func NewVectorRepository(host string, port int) (*VectorRepository, error) {
 	client, err := qdrant.NewClient(&qdrant.Config{
 		Host: host,
 		Port: port,
