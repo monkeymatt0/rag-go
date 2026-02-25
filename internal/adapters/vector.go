@@ -15,6 +15,7 @@ func NewVectorRepository(host string, port int) (*VectorRepository, error) {
 	client, err := qdrant.NewClient(&qdrant.Config{
 		Host: host,
 		Port: port,
+		SkipCompatibilityCheck: true, // This flag disable compatibility check for now it's ok -> TODO: Fix this warning, this regards the version of qdrant you have on docker compared to the client you are using.
 	})
 
 	if err != nil {

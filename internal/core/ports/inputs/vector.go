@@ -36,8 +36,7 @@ type VectorInterface interface {
 	/* CreateData will be used to create a vector within a specific collection
 		params:
 			collectionName: name of the collection,
-			query: The query the user sent,
-			limit: Result limit
+			points: The points that will be created
 	*/
 	CreateData(ctx context.Context, collectionName string, points []*qdrant.PointStruct) (error)
 
