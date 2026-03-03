@@ -8,7 +8,7 @@ import (
 type App struct {
 	Configs configuration.Configuration
 
-	// EmbeddingService TODO: add interface here once pulled from dev into embed service branch
+	EmbeddingService inputs.EmbeddingInterface
 
 	// VectorService
 	VectorService inputs.VectorInterface
