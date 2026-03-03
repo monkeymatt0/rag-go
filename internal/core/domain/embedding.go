@@ -22,6 +22,12 @@ type EmbeddingRequestPayload struct {
 	Input string `json:"input"`
 }
 
+// payload of the request
+type EmbeddingResponse struct {
+	Model      string      `json:"model"`
+	Embeddings [][]float64 `json:"embeddings"`
+}
+
 func NewEmbeddingRequestPayload() *EmbeddingRequestPayload {
 	return &EmbeddingRequestPayload{}
 }

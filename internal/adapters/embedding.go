@@ -5,14 +5,14 @@ import (
 	"context"
 	"customrag/internal/core/domain"
 	"encoding/json"
-	"fmt"
+	"io"
 	"net/http"
 )
 
 type EmbeddingService struct {
-	service string
-	model   string
-	dim     int
+	Service string
+	Model   string
+	Dim     int
 }
 
 func NewEmbeddingService(model string, dim int) *EmbeddingService {
@@ -22,7 +22,7 @@ func NewEmbeddingService(model string, dim int) *EmbeddingService {
 func (es *EmbeddingService) GenerateEmbeddings(
 	ctx context.Context,
 	text string,
-) ([]float32, error) {
+) (*domain.EmbeddingResponse, error) {
 	// TODO: Implement embedding using ollama
 	// 1) Check of text param to see if it is valid
 	if text == "" || text == " " {
@@ -30,7 +30,7 @@ func (es *EmbeddingService) GenerateEmbeddings(
 	}
 	// 2) Create embeddings request
 	embeddingRequestPayload := domain.NewEmbeddingRequestPayload()
-	embeddingRequestPayload.Model = es.model
+	embeddingRequestPayload.Model = es.Model
 	embeddingRequestPayload.Input = text
 
 	// Marshaling the go structure to obtain JSON
@@ -40,11 +40,20 @@ func (es *EmbeddingService) GenerateEmbeddings(
 	}
 	// Transforming in bytes
 	beb := bytes.NewBuffer(eb)
-	resp, err := http.Post(es.service, "application/json", beb)
-	if err != nil {
-		return nil, err
+	resp, err2 := http.Post(es.Service, "application/json", beb)
+	if err2 != nil {
+		return nil, err2
 	}
-	fmt.Println(resp)
-	// 3) return the embedding
-	return nil, nil
+	defer resp.Body.Close()
+	var embeddings domain.EmbeddingResponse
+	embeddingBytes, err3 := io.ReadAll(resp.Body)
+	if err3 != nil {
+		return nil, err3
+	}
+	err4 := json.Unmarshal(embeddingBytes, &embeddings)
+	if err4 != nil {
+		return nil, err4
+	}
+
+	return &embeddings, nil
 }
