@@ -1,13 +1,21 @@
 package adapters
 
 import (
+	"bytes"
 	"context"
 	"customrag/internal/core/domain"
+	"encoding/json"
+	"fmt"
+	"net/http"
 )
 
-type EmbeddingService struct{}
+type EmbeddingService struct {
+	service string
+	model   string
+	dim     int
+}
 
-func NewEmbeddingService() *EmbeddingService {
+func NewEmbeddingService(model string, dim int) *EmbeddingService {
 	return &EmbeddingService{}
 }
 
@@ -21,8 +29,22 @@ func (es *EmbeddingService) GenerateEmbeddings(
 		return nil, domain.ErrEmptyInput
 	}
 	// 2) Create embeddings request
-	embeddingRequest := domain.NewEmbeddingRequest()
+	embeddingRequestPayload := domain.NewEmbeddingRequestPayload()
+	embeddingRequestPayload.Model = es.model
+	embeddingRequestPayload.Input = text
 
+	// Marshaling the go structure to obtain JSON
+	eb, err := json.Marshal(embeddingRequestPayload)
+	if err != nil {
+		return nil, err
+	}
+	// Transforming in bytes
+	beb := bytes.NewBuffer(eb)
+	resp, err := http.Post(es.service, "application/json", beb)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(resp)
 	// 3) return the embedding
 	return nil, nil
 }
