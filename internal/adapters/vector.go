@@ -13,8 +13,8 @@ type VectorRepository struct {
 
 func NewVectorRepository(host string, port int) (*VectorRepository, error) {
 	client, err := qdrant.NewClient(&qdrant.Config{
-		Host: host,
-		Port: port,
+		Host:                   host,
+		Port:                   port,
 		SkipCompatibilityCheck: true, // This flag disable compatibility check for now it's ok -> TODO: Fix this warning, this regards the version of qdrant you have on docker compared to the client you are using.
 	})
 
@@ -25,7 +25,7 @@ func NewVectorRepository(host string, port int) (*VectorRepository, error) {
 	return &VectorRepository{client: client}, nil
 }
 
-func(vr *VectorRepository) Search(
+func (vr *VectorRepository) Search(
 	ctx context.Context,
 	collectionName string,
 	query []float32,
@@ -33,10 +33,10 @@ func(vr *VectorRepository) Search(
 ) ([]*qdrant.ScoredPoint, error) {
 	searchRequest := &qdrant.QueryPoints{
 		CollectionName: collectionName,
-		Query: qdrant.NewQueryDense(query),
-		WithPayload: qdrant.NewWithPayload(true),
-		WithVectors: qdrant.NewWithVectors(false),
-		Limit: &limit,
+		Query:          qdrant.NewQueryDense(query),
+		WithPayload:    qdrant.NewWithPayload(true),
+		WithVectors:    qdrant.NewWithVectors(false),
+		Limit:          &limit,
 		// Offset: offset, TODO: Update the interface to include also an offset
 	}
 
@@ -47,12 +47,11 @@ func(vr *VectorRepository) Search(
 	return result, nil
 }
 
-
-func(vr *VectorRepository) CreateCollection(
-	ctx context.Context, 
-	collectionName string, 
+func (vr *VectorRepository) CreateCollection(
+	ctx context.Context,
+	collectionName string,
 	vectorSize uint64,
-) (error) {
+) error {
 
 	if collectionName == "" || collectionName == " " {
 		return domain.ErrEmptyCollection
@@ -63,7 +62,7 @@ func(vr *VectorRepository) CreateCollection(
 		VectorsConfig: &qdrant.VectorsConfig{
 			Config: &qdrant.VectorsConfig_Params{
 				Params: &qdrant.VectorParams{
-					Size:	vectorSize,
+					Size:     vectorSize,
 					Distance: qdrant.Distance_Cosine,
 				},
 			},
@@ -78,10 +77,10 @@ func(vr *VectorRepository) CreateCollection(
 	return nil
 }
 
-func(vr *VectorRepository) DeleteCollection(
-	ctx context.Context, 
+func (vr *VectorRepository) DeleteCollection(
+	ctx context.Context,
 	collectionName string,
-) (error) {
+) error {
 	if collectionName == "" || collectionName == " " {
 		return domain.ErrEmptyCollection
 	}
@@ -94,15 +93,14 @@ func(vr *VectorRepository) DeleteCollection(
 	return nil
 }
 
-
-func(vr *VectorRepository) CreateData(
+func (vr *VectorRepository) CreateData(
 	ctx context.Context,
 	collectionName string,
 	points []*qdrant.PointStruct,
-) (error) {
+) error {
 	request := qdrant.UpsertPoints{
 		CollectionName: collectionName,
-		Points: points,
+		Points:         points,
 	}
 	_, err := vr.client.Upsert(ctx, &request)
 	if err != nil {
@@ -112,15 +110,14 @@ func(vr *VectorRepository) CreateData(
 	return nil
 }
 
-
-func(vr *VectorRepository) DeleteData(
+func (vr *VectorRepository) DeleteData(
 	ctx context.Context,
 	collectionName string,
 	ids []uint64,
-) (error) {
+) error {
 
 	var qids []*qdrant.PointId
-	for _, id := range(ids) {
+	for _, id := range ids {
 		qids = append(qids, &qdrant.PointId{
 			PointIdOptions: &qdrant.PointId_Num{
 				Num: id,
@@ -139,7 +136,7 @@ func(vr *VectorRepository) DeleteData(
 		},
 	}
 
-	if len(ids) == 0 || collectionName == "" || collectionName == " "{
+	if len(ids) == 0 || collectionName == "" || collectionName == " " {
 		return domain.ErrEmptyCollection
 	}
 
