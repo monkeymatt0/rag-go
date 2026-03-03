@@ -3,6 +3,7 @@ module customrag
 go 1.24.0
 
 require (
+	github.com/joho/godotenv v1.5.1
 	github.com/qdrant/go-client v1.17.1
 	github.com/stretchr/testify v1.11.1
 )
