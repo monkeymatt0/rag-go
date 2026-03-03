@@ -31,19 +31,22 @@ func main() {
 	configs.EmbeddingModelDim = int(emd)
 	configs.LLMModel = os.Getenv("LLM_MODEL")
 	configs.OllamaLocalEmbed = os.Getenv("OLLAMA_LOCAL_EMBED")
-
-	// 5) Creating needed services
 	host := os.Getenv("QDRANT_HOST")
 	port, errPort := strconv.ParseInt(os.Getenv("QDRANT_PORT"), 10, 64)
 	if errPort != nil {
 		fmt.Println("Failed to load the port")
 	}
+	// 5) DI of the services
 	vectorService, errVec := adapters.NewVectorRepository(host, int(port))
 	if errVec != nil {
 		fmt.Println("Failed to create vector service")
 	}
 
+	embeddingService := adapters.NewEmbeddingService(configs.EmbeddingModel, configs.EmbeddingModelDim)
+	embeddingService.Service = configs.OllamaLocalEmbed
+
 	app.VectorService = vectorService
+	app.EmbeddingService = embeddingService
 
 	// 6) Assign configs to the app
 	app.Configs = *configs
