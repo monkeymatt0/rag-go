@@ -1,7 +1,10 @@
 package inputs
 
-import "context"
+import (
+	"context"
+	"customrag/internal/core/domain"
+)
 
 type EmbeddingInterface interface {
-	GenerateEmbeddings(ctx context.Context, text string) ([]float32, error)
+	GenerateEmbeddings(ctx context.Context, text string) (*domain.EmbeddingResponse, error)
 }

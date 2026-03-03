@@ -43,6 +43,7 @@ func main() {
 	}
 
 	embeddingService := adapters.NewEmbeddingService(configs.EmbeddingModel, configs.EmbeddingModelDim)
+	embeddingService.Service = configs.OllamaLocalEmbed
 
 	app.VectorService = vectorService
 	app.EmbeddingService = embeddingService
