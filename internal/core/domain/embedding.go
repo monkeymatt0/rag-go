@@ -3,7 +3,6 @@ package domain
 import (
 	"context"
 	"errors"
-	"net/url"
 )
 
 var (
@@ -17,15 +16,12 @@ type EmbeddingService interface {
 // This data structure will represent the vector.
 type Vector struct{}
 
-// Embedding request has all the needed attribute to perform an embedding request
-// url -> is a private attribute
-// model -> is private for now, in future could became selectable
-type EmebeddingRequest struct {
-	url   url.URL
-	model string
-	Input string
+// payload of the request
+type EmbeddingRequestPayload struct {
+	Model string `json:"model"`
+	Input string `json:"input"`
 }
 
-func NewEmbeddingRequest() *EmebeddingRequest {
-	return &EmebeddingRequest{}
+func NewEmbeddingRequestPayload() *EmbeddingRequestPayload {
+	return &EmbeddingRequestPayload{}
 }
